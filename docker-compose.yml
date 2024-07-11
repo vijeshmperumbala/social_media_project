@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  django:
+    container_name: django
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./accuknox:/usr/src/app/accuknox
+      - ~/apps/postgres:/var/lib/postgresql/data
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.dev
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST_AUTH_METHOD: trust
+      
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
